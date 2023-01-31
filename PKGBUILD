@@ -1,6 +1,7 @@
 # Maintainer: Tobias Powalowski <tpowa@archlinux.org>
+# Maintainer: Yujŏnja <hardboiled65@gmail.com>
 pkgname=pciutils
-pkgver=3.7.0
+pkgver=3.9.0
 pkgrel=2
 pkgdesc="PCI bus configuration space access library and tools"
 arch=(x86_64)
@@ -8,15 +9,19 @@ license=('GPL2')
 url="https://mj.ucw.cz/sw/pciutils/"
 depends=('glibc' 'hwdata' 'kmod')
 makedepends=('git')
+optdepends=('which: for update-pciids'
+            'grep: for update-pciids'
+            'curl: for update-pciids')
 source=(#ftp://ftp.kernel.org/pub/software/utils/${pkgname}/${pkgname}-${pkgver}.tar.bz2
-        https://mj.ucw.cz/download/linux/pci/${pkgname}-${pkgver}.tar.gz{,.sign})
+        # https://mj.ucw.cz/download/linux/pci/${pkgname}-${pkgver}.tar.gz{,.sign})
+        https://mj.ucw.cz/download/linux/pci/${pkgname}-${pkgver}.tar.gz)
         #git+https://github.com/pciutils/pciutils.git#tag=v$pkgver?signed)
 validpgpkeys=(
-              '5558F9399CD7836850553C6EC28E7847ED70F82D' # Martin Mares <mj@ucw.cz>
+              # 'C466A56CADA981F4297D20C31F3D0761D9B65F0B' # Martin Mares <mj@ucw.cz> # Not working
              )
-
-md5sums=('51554c538b5a57b61123326e14ea28a1'
-         'SKIP')
+sha256sums=('8953a785b2e3af414434b8fdcbfb75c90758819631001e60dd3afb89b22b2331'
+            # 'SKIP')
+           )
 
 build() {
   cd $pkgname-$pkgver
@@ -29,6 +34,5 @@ build() {
 package() {
   cd $pkgname-$pkgver
   make SHARED=yes PREFIX=/usr SBINDIR=/usr/bin SHAREDIR=/usr/share/hwdata MANDIR=/usr/share/man DESTDIR="${pkgdir}" install install-lib
-  # this is now supplied by the hwids package
-  rm -rf "$pkgdir"/usr/{sbin/update-pciids,share/{man/man8/update-pciids.8,hwdata}}
+  rm -rf "$pkgdir"/usr/share/hwdata
 }
